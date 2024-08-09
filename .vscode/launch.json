@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "name": "",
+            "type": "f5anything",
+            "request": "launch",
+            "command": ".\\build.bat"
+        }
+    ],
+    "version": "2.0.0"
+}
