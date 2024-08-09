@@ -2,13 +2,16 @@
 #include "headers/commands.h"
 #include "headers/writedatatofile.h"
 #include "headers/writefiletodata.h"
+#include "headers/hexthrutable.h"
+#include "headers/tabletohex.h"
 #include <iostream>
+#include <sstream>
 
 void printHelp() {
     std::cout << "Usage: hexip <command> [options]\n";
     std::cout << "Available commands:\n";
     std::cout << "metadata [removeall | clean | add | remove | read]\n";
-    std::cout << "archive [encrypt | create/pack | decrypt/unpack | test | read]\n";
+    std::cout << "archive [encrypt/create/pack | decrypt/unpack | test | read]\n";
     std::cout << "analyze\n";
     std::cout << "convert\n";
     std::cout << "extract\n";
@@ -18,6 +21,8 @@ void printHelp() {
     std::cout << "help\n";
     std::cout << "wdtf <file1,file2,...> or <folder>\n";
     std::cout << "wftd <input_file>\n";
+    std::cout << "hexthrutable <input_file> <output_file>\n";
+    std::cout << "tabletohex <input_file> <output_file>\n";
 }
 
 void handleMetadataCommand(const std::vector<std::string>& args) {
@@ -141,6 +146,18 @@ void handleCommand(const std::vector<std::string>& args) {
         handleWriteDataToFile(args);
     } else if (command == "wftd") {
         handleWriteFileToData(args);
+    } else if (command == "hexthrutable") {
+        if (args.size() < 3) {
+            std::cout << "Usage: hexip hexthrutable <input_file> <output_file>\n";
+            return;
+        }
+        hexThruTable(args[1], args[2]);
+    } else if (command == "tabletohex") {
+        if (args.size() < 3) {
+            std::cerr << "Usage: hexip tabletohex <input_file> <output_file>" << std::endl;
+            return;
+        }
+        tableToHex(args[1], args[2]);
     } else {
         std::cout << "Unknown command: " << command << "\n";
     }

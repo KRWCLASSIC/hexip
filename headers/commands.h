@@ -13,5 +13,7 @@ void handleHashCommand(const std::vector<std::string>& args);
 void handleWriteDataToFile(const std::vector<std::string>& args);
 void handleWriteFileToData(const std::vector<std::string>& args);
 void handleCommand(const std::vector<std::string>& args);
+void tableToHex(const std::string& inputFile, const std::string& outputFile);
+void tableToHexCommand(const std::string& input);
 
 #endif // COMMANDS_H
