@@ -9,16 +9,26 @@ namespace fs = std::filesystem;
 
 void writeDataToFile(const std::string& input) {
     std::vector<std::string> files;
+    std::vector<std::string> emptyDirs;
     
-    if (fs::is_directory(input)) {
-        for (const auto& entry : fs::directory_iterator(input)) {
-            files.push_back(entry.path().string());
-        }
-    } else {
-        std::istringstream iss(input);
-        std::string file;
-        while (std::getline(iss, file, ',')) {
-            files.push_back(file);
+    std::istringstream iss(input);
+    std::string item;
+    while (std::getline(iss, item, ',')) {
+        if (fs::is_directory(item)) {
+            bool hasFiles = false;
+            for (const auto& entry : fs::recursive_directory_iterator(item)) {
+                if (fs::is_regular_file(entry)) {
+                    files.push_back(entry.path().string());
+                    hasFiles = true;
+                }
+            }
+            if (!hasFiles) {
+                emptyDirs.push_back(item);
+            }
+        } else if (fs::is_regular_file(item)) {
+            files.push_back(item);
+        } else {
+            std::cerr << "Warning: " << item << " is not a valid file or directory." << std::endl;
         }
     }
 
@@ -43,6 +53,13 @@ void writeDataToFile(const std::string& input) {
             outFile << std::setfill('0') << std::setw(2) << std::hex << (int)(unsigned char)byte << std::endl;
         }
 
+        outFile << std::endl << std::endl;
+    }
+
+    // Write empty directories
+    for (const auto& dir : emptyDirs) {
+        outFile << "EmptyDir: " << dir << std::endl;
+        outFile << std::string(80, '-') << std::endl;
         outFile << std::endl << std::endl;
     }
 

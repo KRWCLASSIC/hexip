@@ -6,6 +6,14 @@
 #include "headers/tabletohex.h"
 #include <iostream>
 #include <sstream>
+#include <fstream>
+#include <lib/nlohmann/json.hpp> // Make sure to include the JSON library
+
+// Define constants for application info
+const std::string APP_NAME = "HeXIP";
+const std::string APP_VERSION = "Proof Of Concept - 0.0.0.1";
+const std::string APP_DESCRIPTION = "Archiving solution for paranoid people.";
+const std::string APP_AUTHOR = "KRWCLASSIC";
 
 void printHelp() {
     std::cout << "Usage: hexip <command> [options]\n";
@@ -99,11 +107,13 @@ void handleHashCommand(const std::vector<std::string>& args) {
 
 void handleWriteDataToFile(const std::vector<std::string>& args) {
     if (args.size() < 2) {
-        std::cout << "Usage: hexip wdtf <file1,file2,...> or <folder>\n";
+        std::cout << "Usage: hexip wdtf <file1,file2,...> or <folder1,folder2,...> or <file1,folder1,...>\n";
         return;
     }
     std::string input = args[1];
-    // Call the function from writedatatofile.cpp
+    for (size_t i = 2; i < args.size(); ++i) {
+        input += "," + args[i];
+    }
     writeDataToFile(input);
 }
 
@@ -114,6 +124,13 @@ void handleWriteFileToData(const std::vector<std::string>& args) {
     }
     std::string inputFile = args[1];
     writeFileToData(inputFile);
+}
+
+void handleInfoCommand() {
+    std::cout << "Application Name: " << APP_NAME << "\n";
+    std::cout << "Version: " << APP_VERSION << "\n";
+    std::cout << "Description: " << APP_DESCRIPTION << "\n";
+    std::cout << "Author: " << APP_AUTHOR << "\n";
 }
 
 void handleCommand(const std::vector<std::string>& args) {
@@ -158,6 +175,8 @@ void handleCommand(const std::vector<std::string>& args) {
             return;
         }
         tableToHex(args[1], args[2]);
+    } else if (command == "info") {
+        handleInfoCommand();
     } else {
         std::cout << "Unknown command: " << command << "\n";
     }
