@@ -10,6 +10,8 @@ void handleMetadataCommand(const std::vector<std::string>& args);
 void handleArchiveCommand(const std::vector<std::string>& args);
 void handleSecurityCommand(const std::vector<std::string>& args);
 void handleHashCommand(const std::vector<std::string>& args);
+void handleWriteDataToFile(const std::vector<std::string>& args);
+void handleWriteFileToData(const std::vector<std::string>& args);
 void handleCommand(const std::vector<std::string>& args);
 
 #endif // COMMANDS_H

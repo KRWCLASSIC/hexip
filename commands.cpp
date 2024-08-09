@@ -1,5 +1,7 @@
 // commands.cpp
 #include "headers/commands.h"
+#include "headers/writedatatofile.h"
+#include "headers/writefiletodata.h"
 #include <iostream>
 
 void printHelp() {
@@ -14,6 +16,8 @@ void printHelp() {
     std::cout << "security [add | remove | removeall]\n";
     std::cout << "hash [verify | calculate]\n";
     std::cout << "help\n";
+    std::cout << "wdtf <file1,file2,...> or <folder>\n";
+    std::cout << "wftd <input_file>\n";
 }
 
 void handleMetadataCommand(const std::vector<std::string>& args) {
@@ -88,6 +92,25 @@ void handleHashCommand(const std::vector<std::string>& args) {
     }
 }
 
+void handleWriteDataToFile(const std::vector<std::string>& args) {
+    if (args.size() < 2) {
+        std::cout << "Usage: hexip wdtf <file1,file2,...> or <folder>\n";
+        return;
+    }
+    std::string input = args[1];
+    // Call the function from writedatatofile.cpp
+    writeDataToFile(input);
+}
+
+void handleWriteFileToData(const std::vector<std::string>& args) {
+    if (args.size() < 2) {
+        std::cout << "Usage: hexip wftd <input_file>\n";
+        return;
+    }
+    std::string inputFile = args[1];
+    writeFileToData(inputFile);
+}
+
 void handleCommand(const std::vector<std::string>& args) {
     if (args.empty()) {
         printHelp();
@@ -114,6 +137,10 @@ void handleCommand(const std::vector<std::string>& args) {
         handleSecurityCommand(args);
     } else if (command == "hash") {
         handleHashCommand(args);
+    } else if (command == "wdtf") {
+        handleWriteDataToFile(args);
+    } else if (command == "wftd") {
+        handleWriteFileToData(args);
     } else {
         std::cout << "Unknown command: " << command << "\n";
     }
