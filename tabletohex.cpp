@@ -4,31 +4,29 @@
 #include <sstream>
 #include <filesystem>
 #include <lib/nlohmann/json.hpp>
-#include <algorithm>
-#include <iomanip>
+#include <string>
+#include <locale>
+#include <codecvt>
 
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
 void tableToHex(const std::string& inputFile, const std::string& outputFile) {
-    // Check if hexlookuptable.json exists
-    if (!fs::exists("hexlookuptable.json")) {
-        std::cerr << "Error: hexlookuptable.json not found" << std::endl;
+    if (!fs::exists("reversed_hexlookuptable.json")) {
+        std::cerr << "Error: reversed_hexlookuptable.json not found" << std::endl;
         return;
     }
 
-    // Load the hex lookup table
-    std::ifstream lookupFile("hexlookuptable.json");
+    std::ifstream lookupFile("reversed_hexlookuptable.json");
+    if (!lookupFile.is_open()) {
+        std::cerr << "Error: Unable to open reversed_hexlookuptable.json" << std::endl;
+        return;
+    }
+
     json lookupTable;
     lookupFile >> lookupTable;
 
-    // Create a reverse lookup table
-    std::map<std::string, std::string> reverseLookup;
-    for (const auto& [hex, character] : lookupTable.items()) {
-        reverseLookup[character] = hex;
-    }
-
-    std::ifstream inFile(inputFile);
+    std::ifstream inFile(inputFile, std::ios::binary);
     std::ofstream outFile(outputFile);
 
     if (!inFile || !outFile) {
@@ -40,6 +38,8 @@ void tableToHex(const std::string& inputFile, const std::string& outputFile) {
     bool isData = false;
 
     while (std::getline(inFile, line)) {
+        line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
+
         if (line.substr(0, 6) == "File: ") {
             outFile << line << std::endl;
             isData = false;
@@ -48,13 +48,17 @@ void tableToHex(const std::string& inputFile, const std::string& outputFile) {
             isData = true;
         } else if (isData && !line.empty()) {
             for (char c : line) {
-                std::string charStr(1, c);
-                if (reverseLookup.find(charStr) != reverseLookup.end()) {
-                    outFile << reverseLookup[charStr] << std::endl;
+                std::string charValue(1, c);
+                
+                // Check if character is in lookup table
+                if (lookupTable.contains(charValue)) {
+                    outFile << lookupTable[charValue]; // Write hex value to output
                 } else {
-                    outFile << "??" << std::endl;
+                    outFile << "?"; // Handle unknown characters
+                    std::cerr << "Warning: Character '" << charValue << "' not found in lookup table." << std::endl;
                 }
             }
+            outFile << std::endl;
         }
     }
 

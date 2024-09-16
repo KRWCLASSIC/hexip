@@ -7,7 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
-#include <lib/nlohmann/json.hpp> // Make sure to include the JSON library
+#include <lib/nlohmann/json.hpp>
 
 // Define constants for application info
 const std::string APP_NAME = "HeXIP";

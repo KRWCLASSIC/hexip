@@ -20,9 +20,4 @@ g++ -c tabletohex.cpp -I. -o "%BUILD_DIR%\tmp\tabletohex.o"
 
 REM Link object files into the executable
 g++ "%BUILD_DIR%\tmp\main.o" "%BUILD_DIR%\tmp\commands.o" "%BUILD_DIR%\tmp\writedatatofile.o" "%BUILD_DIR%\tmp\writefiletodata.o" "%BUILD_DIR%\tmp\hexthrutable.o" "%BUILD_DIR%\tmp\tabletohex.o" -o "%BUILD_DIR%\hexip.exe"
-
-REM Open a new command prompt window in the builds directory
-cd builds
-start cmd
-cd ..
 exit
